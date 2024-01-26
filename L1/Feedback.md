@@ -67,7 +67,8 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 
 # Iterative Development Phase
 
-![[Pasted image 20240126182817.png]]
+![image](https://github.com/AshrafMd-1/pupilfirst-wd401/assets/98876115/46a5429c-8c2f-4eec-a7f9-b168ace659b7)
+
 
 # Resolving Merge Conflicts
 
