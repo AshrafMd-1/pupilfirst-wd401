@@ -118,7 +118,7 @@ Lets say there is an existing project using bundling, We now refactor the projec
 ```javascript
 // Before
 import { someFunction } from './module';
-
+ 
 // After
 import { someFunction } from 'module-name';
 ```
