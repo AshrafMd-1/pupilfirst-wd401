@@ -1,8 +1,6 @@
-# Configurations
+# Webpack
 
-## Webpack
-
-Here is my webpack config file (`webpack.config.js`)
+Here is my webpack config file (`webpack.config.js`):
 
 ```javascript
 const path = require('path');
@@ -13,14 +11,12 @@ module.exports = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
   },
-  // This part will convert the index.js file to a bundle.js file in the dist folder
   module: {
     rules: [
       {
         test: /\.css$/,
         use: ['style-loader', 'css-loader'],
       },
-      // This part will bundle CSS files
       {
         test: /\.(png|jpg|gif)$/,
         use: [
@@ -33,44 +29,74 @@ module.exports = {
           },
         ],
       },
-      // This part will bundle image files
     ],
   },
 };
 ```
-
-This webpack configuration bundles CSS files using `style-loader` and `css-loader`, and image files using `file-loader`.
 
 Here is the explanation of the webpack configuration:
 
 - **Entry:** The entry point for the application. Webpack will start in this file and bundle all the dependencies.
 - **Output:** The output file path. Webpack will bundle dependencies and store it in this file.
 - **Module:** The rules for bundling files.
-- **test:** The file that are to be bundled
+- **test:** The file that is to be bundled.
 - **use:** The loaders to be used for bundling the files.
 
-## Code Splitting & Lazy Loading
+All these loaders reduce the file size by bundling the huge files into a minified format, which helps save space and also doesn't add pressure on the network.
 
-Code splitting and lazy loading are methods for optimizing JS files loading.
+- `style-loader` and `css-loader` are used to minify CSS stylesheets.
+- `file-loader` is used to minify different files such as pdf, mp4, etc. This helps in reducing file size.
 
-For example, if you have a large JS file, you can split it into smaller files and load them when asked. This is called code splitting.
+# Code Splitting & Lazy Loading
 
-Lazy loading is a method for loading JS files on ask or when required, instead of loading them all at once all at once. This can improve performance
+Usually, when we have a large project of JS and TS files, the number of dependencies, packages, and files becomes huge. If a client system requests these files all at once, the page may have a higher loading time, which causes the user to lose interest while waiting, and there may also be pressure on the limited bandwidth. To solve this issue, we can use Code Splitting & Lazy Loading.
 
-For example:
+## What is Code Splitting?
+
+Code splitting is a technique used to improve the performance of web applications by splitting the codebase into smaller, more manageable chunks. The idea is to load only the code that is necessary for a particular functionality or page, rather than loading the entire application code upfront. This can lead to faster initial page loads and improved user experience.
+
+## What is Lazy Loading?
+
+Lazy loading is a strategy in software development, particularly in web development, where resources (such as images, scripts, or modules) are loaded on demand or when they are actually needed, rather than being loaded upfront when the page initially loads. The goal is to defer the loading of non-essential content, improving the initial page load time and reducing the amount of data transferred over the network.
+
+So basically, you are only requesting those modules which are needed for the function on the current webpage so you can load the page faster and with less data.
+
+Here is an example:
 
 ```javascript
-//index.js
-document.getElementById('button').addEventListener('click', () => {
-  import('./lazyModule.js')
-    .then((module) => {
-      // Using the module
-      module.doSomething();
-    })
-    .catch((error) => {
-      console.error('Error loading module:', error);
-    });
-});
+import { useRoutes } from "raviger";
+import { lazy, Suspense } from "react";
+import { ErrorPage } from "./components/ErrorPage";
+import { LoadingScreen } from "./components/LoadingScreen";
+
+// Here, all the components are loaded lazily, so they are only requested when there is a demand
+const HomePage = lazy(() => import("./pages/homepage/HomePage"));
+const Login = lazy(() => import("./pages/authenticate/auth/Login"));
+const Signup = lazy(() => import("./pages/authenticate/auth/Signup"));
+const AllTodo = lazy(() => import("./pages/dashboard/todo/AllTodo"));
+
+const routes = {
+  "/": () => <HomePage />,
+  "/login": () => <Login />,
+  "/signup": () => <Signup />,
+  "/todo": () => <AllTodo />,
+  "*": () => (
+    <ErrorPage
+      status={"404"}
+      message={"Page not found"}
+      description={
+        "Oops! The page you are looking for does not exist. It might have been moved or deleted."
+      }
+    />
+  ),
+};
+
+// The Suspense component is used for a fallback component such as a loading screen while the actual content is loaded.
+const App = () => {
+  return <Suspense fallback={<LoadingScreen />}>{useRoutes(routes)}</Suspense>;
+};
+
+export default App;
 ```
 
 Advantages of code splitting and lazy loading:
@@ -79,62 +105,87 @@ Advantages of code splitting and lazy loading:
 - **Better resource usage:** Unused code is loaded on demand, saving network and improving performance.
 - **Good user experience:** Faster page loading.
 
-## Import Maps
+# Import Maps
 
-Import maps provide a way to map modules to URLs, allowing for more dynamic and flexible loading. Unlike normal bundling, import maps enable the browser to load modules when asked.
+## What Are Import Maps?
+
+Import maps are a feature in modern JavaScript that provides a way to define and manage the mapping between module specifiers and their corresponding URLs. This helps simplify the handling of module dependencies and allows developers to control how modules are resolved.
+
+Unlike normal bundling, import maps enable the browser to load modules when asked.
 
 The advantages are:
 
-- **Simpler dependency management**
-- **Dynamic imports**
+- **Simplifies Dependency Management:**
+- **Enhances Code Readability:**
+- **Facilitates Versioning and Upgrades:**
+- **Reduces Configuration Errors:**
+ - **Enables Dynamic Imports:**
 
 ## Implementing Import Maps
 
-To use import maps, we first create an `importmap.json` file:
+The basic idea is to have a centralized configuration, often in the form of a JSON file called an import map, where developers can specify the mappings between module names and their actual locations. This can be useful in scenarios where the actual file paths or URLs of modules may change, or when developers want to use shorter or more convenient names for modules.
+
+Here is an example for import maps:
 
 ```json
 {
   "imports": {
-    "module-name": "/path/to/module.js"
+    "react": "https://unpkg.com/react@17/umd/react.production.min.js",
+    "react-dom": "https://unpkg.com/react-dom@17/umd/react-dom.production.min.js",
+    "lodash": "https://cdn.jsdelivr.net/npm/lodash@4/lodash.min.js"
   }
 }
 ```
 
-In your HTML:
-
-```html
-<script type="importmap" src="/path/to/importmap.json"></script>
-<!-- We need to tell the browser that we are injecting importmaps -->
-<script type="module">
-  import { someFunction } from 'module-name';
-  someFunction();
-</script>
-```
+So here we have defined the `react`, `react-dom`, and `loadash` import URLs. Now these links can be used to only load dependencies that are required.
 
 ## Using Import Maps
 
-Lets say there is an existing project using bundling, We now refactor the project to use import maps.
-
-```javascript
-// Before
-import { someFunction } from './module';
- 
-// After
-import { someFunction } from 'module-name';
-```
-
-In HTML:
+We now use import maps in an actual web application:
 
 ```html
-<!-- Before -->
-<script src="dist/bundle.js"></script>
+<html lang="en">
+<head>
+  <title>React and Lodash Example</title>
+  <script type="importmap">
+    {
+      "imports": {
+        "react": "https://unpkg.com/react@17/umd/react.production.min.js",
+        "react-dom": "https://unpkg.com/react-dom@17/umd/react-dom.production.min.js",
+        "lodash": "https://cdn.jsdelivr.net/npm/lodash@4/lodash.min.js"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module">
+    // Import React and Lodash from the import map
+    import React from 'react';
+    import ReactDOM from 'react-dom';
+    import _ from 'lodash';
 
-<!-- After -->
-<script type="importmap" src="/path/to/importmap.json"></script>
-<script type="module">
-  import { someFunction } from 'module-name';
-  someFunction();
-</script>
+    // React component using Lodash
+    const App = () => {
+      const numbers = [1, 2, 3, 4, 5];
+      const sum = _.sum(numbers);
+      return (
+        <div>
+          <h1>React and Lodash Example</h1>
+          <p>Sum of numbers: {sum}</p>
+        </div>
+      );
+    };
+
+    // Render the React component
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>
 ```
 
-This refactoring adds a new `importmap.json` file and changes the script tag to use the import map. Which helps in making the user experience better.
+In this example, the import map specifies the URLs for React, React DOM, and Lodash. The HTML file then uses these import maps to dynamically load React, ReactDOM, and Lodash when the application runs.
+
+The React component (`App`) uses Lodash to calculate the sum of an array of numbers, demonstrating the dynamic import of the necessary dependencies.
+
+This is how we use import maps in our web application.
