@@ -12,15 +12,22 @@ TypeScript is a superset of JavaScript that adds static typing to the language. 
 
 ### Example
 
-```ts
-//before [js] 
-function addNumbers(a, b) { return a + b; } const result = addNumbers(5, 7); console.log(result);
+```ts  
+//before [js]  
+function addNumbers(a, b) {
+	return a + b;
+}
 
-//after [ts]
-function addNumbers(a: number, b: number): number { return a + b; } 
-const result = addNumbers(5, 7); 
-console.log(result);
-```
+const result = addNumbers(5, 7);
+console.log(result);  
+  
+//after [ts]  
+function addNumbers(a: number, b: number): number {
+return a + b;
+}  
+const result = addNumbers(5, 7);  
+console.log(result);  
+```  
 
 As you can see here TypeScript helps in removing the weird behaviors JavaScript has by keeping strict type checking
 ## Babel
@@ -37,17 +44,17 @@ Key features and uses of Babel include:
 
 ### Example
 
-```js
-// ES6 Syntax [normal]
-const greet = (name) => { 
-	console.log(`Hello, ${name}!`); 
-};
-
-// ES5 equivalent of arrow function [Babel]
-var greet = function greet(name) { 
-	console.log("Hello, " + name + "!"); 
-};
-```
+```js  
+// ES6 Syntax [normal]  
+const greet = (name) => {  
+console.log(`Hello, ${name}!`);  
+};  
+  
+// ES5 equivalent of arrow function [Babel]  
+var greet = function greet(name) {  
+console.log("Hello, " + name + "!");  
+};  
+```  
 
 ## Specific Scenarios
 
@@ -71,43 +78,43 @@ Example:
 
 **Javascript code:**
 
-```javascript
-// JavaScript
-function addNumbers(a, b) {
-    return a + b;
-}
-
-console.log(addNumbers(5, "10")); // No type errors shown at compile-time
-```
+```javascript  
+// JavaScript  
+function addNumbers(a, b) {  
+    return a + b;  
+}  
+  
+console.log(addNumbers(5, "10")); // No type errors shown at compile-time  
+```  
 
 **Typescript code:**
 
-```typescript
-// TypeScript
-function addNumbers(a: number, b: number): number {
-    return a + b;
-}
-
-console.log(addNumbers(5, "10")); // Type error shown during compilation
-```
+```typescript  
+// TypeScript  
+function addNumbers(a: number, b: number): number {  
+    return a + b;  
+}  
+  
+console.log(addNumbers(5, "10")); // Type error shown during compilation  
+```  
 
 This conversion improves code quality by catching type-related errors during development.
 
 ## Babel Configuration
 
-Babel configaration to compile ES6+ code to ES5 by creating a `.babelrc` file:
+Babel configuration to compile ES6+ code to ES5 by creating a `.babelrc` file:
 
-```json
-// .babelrc
-{
-  "presets": [
-    "@babel/preset-env"
-  ],
-  "plugins": [
-    // Add any additional plugins as needed
-  ]
-}
-```
+```json  
+// .babelrc  
+{  
+  "presets": [  
+    "@babel/preset-env"  
+  ],  
+  "plugins": [  
+    // Add any additional plugins as needed  
+  ]  
+}  
+```  
 
 Explanation:
 - **Presets:** Use `@babel/preset-env` to enable the latest ECMAScript features depending on the target environment.
@@ -119,19 +126,19 @@ Consider a large-scale enterprise application with a huge development team.
 
 ### Choose Babel when
 - **Project Size:** - **Small to Medium Projects:**
-	For smaller to medium-sized projects with less complexity, where the benefits of a sophisticated type system might not be as crucial.
+For smaller to medium-sized projects with less complexity, where the benefits of a sophisticated type system might not be as crucial.
 - **Team Expertise:** - **Team Comfortable with Dynamic Typing:**
-	If your development team is more comfortable with dynamic typing and prefers the flexibility it offers, Babel might be a better fit.
+If your development team is more comfortable with dynamic typing and prefers the flexibility it offers, Babel might be a better fit.
 - **Future Maintainability:** - **Short-term or Prototype Focus:**
-	If the primary goal is to quickly develop a prototype or the project is not expected to have long-term maintenance requirements.
+If the primary goal is to quickly develop a prototype or the project is not expected to have long-term maintenance requirements.
 
 ### Choose TypeScript when
 - **Project Size:** - **Medium to Large Projects:**
-	Especially for medium to large projects where the added structure and safety provided by static typing become more valuable as the codebase grows.
+Especially for medium to large projects where the added structure and safety provided by static typing become more valuable as the codebase grows.
 - **Team Expertise:** - **Experience with Static Typing:**
-	If your team has experience with static typing and appreciates the benefits it brings in terms of catching errors early, improving code quality, and enhancing collaboration.
+If your team has experience with static typing and appreciates the benefits it brings in terms of catching errors early, improving code quality, and enhancing collaboration.
 - **Future Maintainability:**- **Long-term Focus:**
-	When long-term maintainability is a key consideration, TypeScript's static types can serve as valuable documentation, making it easier for future developers to understand and work with the code.
+When long-term maintainability is a key consideration, TypeScript's static types can serve as valuable documentation, making it easier for future developers to understand and work with the code.
 
 # Advanced TypeScript Features
 
@@ -139,45 +146,45 @@ Consider a large-scale enterprise application with a huge development team.
 
 A decorator is a special type of declaration in JavaScript and TypeScript that can be applied to classes, methods, properties, or parameters. It allows you to modify or extend the behaviour of these elements at the time of their declaration. Decorators provide a way to cleanly separate concerns, making code more modular and maintainable.
 
-```typescript
-// Decorator example
-function log(target: any, key: string, descriptor: PropertyDescriptor) {
-    const originalMethod = descriptor.value;
-
-    descriptor.value = function (...args: any[]) {
-        console.log(`Calling ${key} with arguments: ${args}`);
-        const result = originalMethod.apply(this, args);
-        console.log(`${key} returned: ${result}`);
-        return result;
-    };
-
-    return descriptor;
-}
-
-class Calculator {
-    @log
-    add(a: number, b: number): number {
-        return a + b;
-    }
-}
-
-const calculator = new Calculator();
-calculator.add(2, 3);
-```
+```typescript  
+// Decorator example  
+function log(target: any, key: string, descriptor: PropertyDescriptor) {  
+    const originalMethod = descriptor.value;  
+  
+    descriptor.value = function (...args: any[]) {  
+        console.log(`Calling ${key} with arguments: ${args}`);  
+        const result = originalMethod.apply(this, args);  
+        console.log(`${key} returned: ${result}`);  
+        return result;  
+    };  
+  
+    return descriptor;  
+}  
+  
+class Calculator {  
+    @log  
+    add(a: number, b: number): number {  
+        return a + b;  
+    }  
+}  
+  
+const calculator = new Calculator();  
+calculator.add(2, 3);  
+```  
 
 ## Generics
 
 Generics in TypeScript, provide a way to create functions, classes, or interfaces that can work with different data types while maintaining type safety. They allow you to write code that is more flexible and reusable by allowing the use of variables for specifying types.
 
-```typescript
-// Generics example
-function display<T>(arg: T): T{
-	return arg
-}
-
-const res = display("qwerty");
-console.log(res)
-```
+```typescript  
+// Generics example  
+function display<T>(arg: T): T{  
+return arg  
+}  
+  
+const res = display("qwerty");  
+console.log(res)  
+```  
 
 Best Practices:
 - Use decorators for cross-cutting concerns like logging or authentication.
