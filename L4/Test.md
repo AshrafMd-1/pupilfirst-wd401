@@ -140,6 +140,16 @@ jobs:
           cd todo-app
           npm install cypress cypress-json-results
           npx cypress run
+
+      - name: Notify on success
+        if: success()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The Auto Test Todo App workflow has passed successfully! :tada:"}' ${{secrets.SLACK_WEBHOOK_URL}}
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The Auto Test Todo App workflow has failed. :warning:"}' ${{secrets.SLACK_WEBHOOK_URL}}
 ```
 
 ### Part 1: Define Workflow
@@ -235,7 +245,25 @@ This step sets up the database for the application by dropping and recreating it
           npx cypress run
 ```
 
-Finally, this step installs Cypress and runs integration tests against the running application.
+This step installs Cypress and runs integration tests against the running application.
+
+### Part 8: Connect To Slack
+
+```yaml
+      - name: Notify on success
+        if: success()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The Auto Test Todo App workflow has passed successfully! :tada:"}' ${{secrets.SLACK_WEBHOOK_URL}}
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The Auto Test Todo App workflow has failed. :warning:"}' ${{secrets.SLACK_WEBHOOK_URL}}
+```
+
+Finally, this step will notify your Slack channel about the success or failure of the integration tests.
+
+> ${{secrets.SLACK_WEBHOOK_URL}} is a environment variable
 
 This GitHub Actions workflow ensures that the application is set up, dependencies are installed, and both unit and integration tests are executed whenever there's a push event to the repository.
 
@@ -246,5 +274,8 @@ This GitHub Actions workflow ensures that the application is set up, dependencie
 
 #### Integration Tests
 ![Pasted image 20240227205656](https://github.com/AshrafMd-1/pupilfirst-wd401/assets/98876115/3b1e52d8-f025-4f5c-af36-a81256fc52fa)
+
+#### Slack Message
+![image](https://github.com/AshrafMd-1/pupilfirst-wd401/assets/98876115/26655e47-76e7-4e7d-989b-cc96db0f771c)
 
 This is how testing and GitHub workflows are set up.
