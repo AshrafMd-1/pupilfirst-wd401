@@ -117,10 +117,21 @@ Explanation:
 ## Project Overview
 Consider a large-scale enterprise application with a huge development team.
 
-## Factors Influencing Choice
-- **Project Size:** For a large project, TypeScript's static typing provides a safety net, reducing bugs and improving code maintainability.
-- **Team Expertise:** If the team is comfortable with static typing and welcomes the benefits, TypeScript is a good choice.
-- **Future Maintainability:** TypeScript's type system enhances code documentation and makes it easier for future developers to understand and extend the codebase.
+### Choose Babel when
+- **Project Size:** - **Small to Medium Projects:**
+	For smaller to medium-sized projects with less complexity, where the benefits of a sophisticated type system might not be as crucial.
+- **Team Expertise:** - **Team Comfortable with Dynamic Typing:**
+	If your development team is more comfortable with dynamic typing and prefers the flexibility it offers, Babel might be a better fit.
+- **Future Maintainability:** - **Short-term or Prototype Focus:**
+	If the primary goal is to quickly develop a prototype or the project is not expected to have long-term maintenance requirements.
+
+### Choose TypeScript when
+- **Project Size:** - **Medium to Large Projects:**
+	Especially for medium to large projects where the added structure and safety provided by static typing become more valuable as the codebase grows.
+- **Team Expertise:** - **Experience with Static Typing:**
+	If your team has experience with static typing and appreciates the benefits it brings in terms of catching errors early, improving code quality, and enhancing collaboration.
+- **Future Maintainability:**- **Long-term Focus:**
+	When long-term maintainability is a key consideration, TypeScript's static types can serve as valuable documentation, making it easier for future developers to understand and work with the code.
 
 # Advanced TypeScript Features
 
@@ -164,7 +175,8 @@ function display<T>(arg: T): T{
 	return arg
 }
 
-const result = identity(123);
+const res = display("qwerty");
+console.log(res)
 ```
 
 Best Practices:
