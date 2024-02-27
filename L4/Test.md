@@ -1,27 +1,44 @@
-# Configuration
+# Testing Configuration
 
-In my Node.js project, I implemented a testing framework using Jest for unit tests and Cypress for integration tests. The `package.json` file includes the necessary dependencies:
+## What is Jest
 
-```json
-"devDependencies": {
-  "jest": "^27.0.6",
-  "cypress": "^8.4.0",
-  "cypress-json-results": "^1.3.0"
-}
+jest is a JavaScript testing framework developed by Facebook. It is widely used for testing JavaScript code, including unit testing, integration testing, and end-to-end testing for web applications. Jest is particularly known for its simplicity, speed, and ease of use.
+
+## What is Cypress
+
+### Introduction
+Cypress is an end-to-end testing framework designed for modern web applications. It is used to write and run tests that simulate user interactions within a web browser. Cypress is known for its simplicity, speed, and ability to provide real-time feedback during the development and testing process.
+
+### Configuration
+
+```js
+const { defineConfig } = require("cypress");
+
+module.exports = defineConfig({
+  e2e: {
+    baseUrl: "http://localhost:3000",
+    retries: 2,
+    requestTimeout: 15000,
+  },
+});
 ```
 
-For Cypress, the configuration is in the `cypress.json` file, specifying the base URL for the application.
-
+In my Node.js project, I implemented a testing framework using Jest for unit tests and Cypress for integration tests.
 ## Test Suite
 
-My test suite covers the to-do list application. Unit tests focus on individual functions, such as adding and updating to-dos. Integration tests focus on the working of the components, including database operations and UI functionality.
+My test suite covers the to-do list application.
+- Unit tests focus on individual functions, such as adding and updating to-dos.
+- Integration tests focus on the working of the components, including database operations and UI functionality.
 
 ### Unit Tests
 
 For example, we have unit tests to check the addition of a new todo item:
 
+> Link to the actual code [Unit Tests (github.com)](https://github.com/AshrafMd-1/pupilfirst-wd201/blob/master/todo-app/__tests__/todos.js)
+
+#### Sample Code
+
 ```javascript
-// __test__/todos.js
 test("Create a Todo-Item as user 1", async () => {
     const agent = request.agent(server);
     await login(agent, "tonystark@test.com", "password");
@@ -38,43 +55,46 @@ test("Create a Todo-Item as user 1", async () => {
   });
 ```
 
+#### Output
+<img width="325" alt="Pasted image 20240227202234" src="https://github.com/AshrafMd-1/pupilfirst-wd401/assets/98876115/b9397d69-1330-42ba-a74e-f1fe7efb9be5">
+
 ### Integration Tests
 
 An integration test checks that adding a todo item works:
 
+> Link to the actual code [Integration Tests (github.com)](https://github.com/AshrafMd-1/pupilfirst-wd201/tree/master/todo-app/cypress/e2e)
+#### Files
+<img width="186" alt="Pasted image 20240227202322" src="https://github.com/AshrafMd-1/pupilfirst-wd401/assets/98876115/9fd7a2e6-10c4-4aad-a230-f443731a9ab5">
+
+#### Sample Code
+
 ```javascript
-// cypress/integration/todos.js
-
-describe('Todo Tests', () => {
-  it('Create a Todo-Item as user 1', () => {
-    cy.visit('http://localhost:3000')
-      .get('[data-cy=email]').type('tonystark@test.com')
-      .get('[data-cy=password]').type('password')
-      .get('[data-cy=loginButton]').click()
-      .get('[data-cy=todosLink]').click()
-      .get('[data-cy=title]').type('Buy milk')
-      .get('[data-cy=dueDate]').type(new Date().toISOString())
-      .get('[data-cy=completed]').uncheck()
-      .get('[data-cy=createTodoButton]').click()
-      .url().should('include', '/todos')
-      .get('[data-cy=todoItem]').should('have.length', 1);
-  });
+it("Todo form should accept correct details", () => {  
+  cy.get("#todo").type("Todo 2");  
+  cy.get("#date").type("2021-12-14");  
+  cy.get("button").contains("Add").click();  
+  cy.get("#notify-success").then(($el) => {  
+    expect($el.text().trim()).to.equal("Todo added successfully");  
+  });  
 });
-
 ```
+
+#### Output
+<img width="564" alt="Pasted image 20240227203043" src="https://github.com/AshrafMd-1/pupilfirst-wd401/assets/98876115/2af669fe-2f51-471c-8963-dc26b1f6752b">
 
 ## Automatic Test Suite Execution
 
-I have set up GitHub Actions to run my test suite automatically on each push to the repository. The workflow configuration file (`.github/workflows/test.yml`) triggers the workflow on a `push` event:
+I have set up GitHub Actions to run my test suite automatically on each push to the repository. The workflow configuration file (`.github/workflows/main.yml`) triggers the workflow on a `push` event and it involves running tests for a Node.js application with a PostgreSQL database"
+
+### GitHub Workflow File
 
 ```yaml
-name: Automated Tests
-
-on:
-  push:
-    branches:
-      - main
-
+name: Auto Test Todo App
+on: push
+env:
+  PG_DATABASE: todo_db_test
+  PG_USER: postgres
+  PG_PASSWORD: ashraf
 jobs:
   run-tests:
     runs-on: ubuntu-latest
@@ -84,64 +104,58 @@ jobs:
         image: postgres:11.7
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: wd-todo-test
+          POSTGRES_PASSWORD: ashraf
+          POSTGRES_DB: todo_db_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
         ports:
           - 5432:5432
 
     steps:
-      - name: Checkout code
+      - name: Check out repository code
         uses: actions/checkout@v3
 
       - name: Install dependencies
-        run: cd l10 && npm ci
+        run: cd todo-app && npm ci
 
       - name: Run unit tests
-        run: cd l10 && npm test
+        run: cd todo-app && npm test
 
-      - name: Setup and run app
+      - name: Run the app
+        id: run-app
         run: |
-          cd l10
+          cd todo-app
           npm install
           npx sequelize-cli db:drop
           npx sequelize-cli db:create
           npx sequelize-cli db:migrate
-          PORT=3000 npm start &
+          PORT=3000 npm run start:dev &
           sleep 5
 
       - name: Run integration tests
         run: |
-          cd l10
+          cd todo-app
           npm install cypress cypress-json-results
-          npx cypress run --env STUDENT_SUBMISSION_URL="http://localhost:3000/"
+          npx cypress run
 ```
 
-# GitHub Actions Walkthrough
-
-## Workflow
-
-My GitHub Actions workflow automatically runs the test suite for the Node.js project on every push to the `main` branch. The workflow consists of multiple steps that set up the 
-1. testing environment
-2. install dependencies
-3. execute both unit and integration tests.
-
-## Workflow Configuration File
-
-The workflow configuration is defined in the `.github/workflows/test.yml` file. Let's break down each part:
+### Part 1: Define Workflow
 
 ```yaml
-name: Automated Tests
-
-on:
-  push:
-    branches:
-      - main
+name: Auto Test Todo App
+on: push
+env:
+  PG_DATABASE: todo_db_test
+  PG_USER: postgres
+  PG_PASSWORD: ashraf
 ```
 
-- **Name:** Defines the workflow's name as "Automated Tests."
-- **On:** Specifies the trigger for the workflow. In this case, it runs on every push to the `main` branch.
+This part defines the workflow name, triggers it on a push event, and sets up environment variables for PostgreSQL database connection parameters.
 
-## Job Configuration
+### Part 2: Define Jobs
 
 ```yaml
 jobs:
@@ -149,10 +163,9 @@ jobs:
     runs-on: ubuntu-latest
 ```
 
-- **Job Name:** The job is named `run-tests`.
-- **Runs On:** Specifies the OS for the job. In this case, it runs on the latest version of Ubuntu.
+Here, a job named `run-tests` is defined, specifying that it will run on an Ubuntu environment.
 
-## Service Configuration
+### Part 3: Set Up PostgreSQL Service
 
 ```yaml
     services:
@@ -160,79 +173,78 @@ jobs:
         image: postgres:11.7
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: wd-todo-test
+          POSTGRES_PASSWORD: ashraf
+          POSTGRES_DB: todo_db_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
         ports:
           - 5432:5432
 ```
 
-- **Services:** Configures a PostgreSQL service to create a database for testing.
-  - **Image:** Specifies the Docker image for PostgreSQL version 11.7.
-  - **Environment Variables:** Sets up necessary environment variables for the PostgreSQL service.
-  - **Ports:** connects the PostgreSQL container's port 5432 to the host machine's port 5432.
+This section sets up a PostgreSQL service using the official PostgreSQL Docker image. It configures the necessary environment variables, health check options, and exposes the PostgreSQL port.
 
-## Steps Execution
+### Part 4: Define Steps
 
 ```yaml
     steps:
-      - name: Checkout code
+      - name: Check out repository code
         uses: actions/checkout@v3
 ```
 
-- **Checkout Code:** Utilizes the `actions/checkout` action to fetch the latest code from the repository.
+The workflow starts by checking out the code repository using the `actions/checkout` action.
+
+### Part 5: Install Dependencies and Run Unit Tests
 
 ```yaml
       - name: Install dependencies
-        run: cd l10 && npm ci
-```
+        run: cd todo-app && npm ci
 
-- **Install Dependencies:** Changes to the `l10` directory and runs `npm ci` to install project dependencies using the exact versions specified in `package-lock.json`.
-
-```yaml
       - name: Run unit tests
-        run: cd l10 && npm test
+        run: cd todo-app && npm test
 ```
 
-- **Run Unit Tests:** Executes the unit tests located in the `l10` directory using the `npm test` command.
+This part installs Node.js dependencies and runs unit tests for the `todo-app`.
+
+### Part 6: Set Up Database and Start the App
 
 ```yaml
-      - name: Setup and run app
+      - name: Run the app
+        id: run-app
         run: |
-          cd l10
+          cd todo-app
           npm install
           npx sequelize-cli db:drop
           npx sequelize-cli db:create
           npx sequelize-cli db:migrate
-          PORT=3000 npm start &
+          PORT=3000 npm run start:dev &
           sleep 5
 ```
 
-- **Setup and Run App:** Sets up the application environment by installing dependencies and performing database operations using Sequelize CLI. The application is started on port 3000 in the background.
+This step sets up the database for the application by dropping and recreating it. It also runs database migrations and starts the application on port 3000.
+
+### Part 7: Run Integration Tests
 
 ```yaml
       - name: Run integration tests
         run: |
-          cd l10
+          cd todo-app
           npm install cypress cypress-json-results
-          npx cypress run --env STUDENT_SUBMISSION_URL="http://localhost:3000/"
+          npx cypress run
 ```
 
-- **Run Integration Tests:** Installs Cypress and its dependencies, then executes integration tests using Cypress. The `STUDENT_SUBMISSION_URL` environment variable is set to the local application URL.
+Finally, this step installs Cypress and runs integration tests against the running application.
 
-## Detailed Explanation
+This GitHub Actions workflow ensures that the application is set up, dependencies are installed, and both unit and integration tests are executed whenever there's a push event to the repository.
 
-1. **Trigger:**
-   - The workflow is triggered on every push event targeting the `main` branch.
+### Output
 
-2. **Job Creation:**
-   - The `run-tests` job is initialized, specifying it runs on an Ubuntu environment.
+#### Unit Tests
+![Pasted image 20240227205508](https://github.com/AshrafMd-1/pupilfirst-wd401/assets/98876115/6ce43236-5891-4bec-9469-a3538c302937)
 
-3. **Service Config:**
-   - The PostgreSQL service is configured to mimic a database, ensuring seamless integration testing.
-
-4. **Steps Execution:**
-   - Code is checked, dependencies are installed, and unit tests are executed.
-   - The application is set up, including database operations, and started on port 3000.
-   - Integration tests are then run using Cypress, simulating interactions with the application.
+#### Integration Tests
+![Pasted image 20240227205656](https://github.com/AshrafMd-1/pupilfirst-wd401/assets/98876115/3b1e52d8-f025-4f5c-af36-a81256fc52fa)
 
 This is how testing and GitHub workflows are set up.
