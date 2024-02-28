@@ -154,6 +154,9 @@ env:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"⚠️ Uh-oh! The CI & CD workflow encountered issues and failed. Immediate attention is needed. :warning:"}' ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
 
+## Output
+![image](https://github.com/AshrafMd-1/pupilfirst-wd401/assets/98876115/95625c55-bb5c-4ad2-82c0-f876172d3318)
+
 This configuration ensures that the necessary environment variables are appropriately set within the CI/CD pipeline, maintaining security and allowing seamless integration across different stages of the application development process.
 
 # Error Reporting Integration
@@ -208,6 +211,7 @@ So during the process of the pipeline if there is any error it sends a message o
 ![image](https://github.com/AshrafMd-1/pupilfirst-wd401/assets/98876115/1a638fee-96b5-4d21-8ea7-b5b07db627ed)
 ![image](https://github.com/AshrafMd-1/pupilfirst-wd401/assets/98876115/18187b7f-b7dc-4493-aea8-7fd68d498482)
 
+---
 - on success
 ![image](https://github.com/AshrafMd-1/pupilfirst-wd401/assets/98876115/f4d2e6b7-ad65-4fed-a251-95bcb7e5b3c8)
 ![image](https://github.com/AshrafMd-1/pupilfirst-wd401/assets/98876115/14105d40-6280-4b99-9b3c-262ffa9c58ed)
@@ -215,3 +219,4 @@ So during the process of the pipeline if there is any error it sends a message o
 By following these steps, the pipeline establishes a direct communication channel with Slack, ensuring that the development team receives immediate and detailed notifications whenever errors occur during the execution of the CI/CD pipeline. This proactive approach enhances collaboration and facilitates rapid issue resolution.
 
 # Video for the Project
+https://drive.google.com/file/d/1ZKWNBnbvQtcAh_Ij_-L2BdSadKilRcpR/view?usp=sharing
