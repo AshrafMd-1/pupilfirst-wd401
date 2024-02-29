@@ -131,10 +131,12 @@ As you can see instead of a single application pm2 make a cluster of 6 apps
 
 Now to stop all the clusters we use the command
 `pm2 stop all`
+
 <img width="500" alt="image" src="https://github.com/AshrafMd-1/pupilfirst-wd401/assets/98876115/89c763f1-04b4-4f37-b491-949a64759757">
 
 If we want to delete them all we use the command
 `pm2 delete all`
+
 <img width="451" alt="image" src="https://github.com/AshrafMd-1/pupilfirst-wd401/assets/98876115/42b764c0-d6f2-4732-ab10-91bd098c9706">
 
 So, This is how we configure a pm2 environment
