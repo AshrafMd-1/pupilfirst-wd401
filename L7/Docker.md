@@ -375,3 +375,6 @@ jobs:
 ![image](https://github.com/AshrafMd-1/pupilfirst-wd401/assets/98876115/fcbdf110-e0dd-4b04-af6f-feb1a7aed767)
 
 This CI/CD pipeline automates the build, testing, and notification processes, ensuring a smooth and efficient development workflow.
+
+# Video Link
+https://drive.google.com/file/d/1DWTC2IziNdGClHQjICkeUWpakF4PPBbp/view?usp=sharing
