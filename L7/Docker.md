@@ -267,6 +267,13 @@ volumes:
 **Summary:**
 This Docker Compose configuration defines two services ('app' and 'db') and their associated settings, dependencies, and volume configurations. It orchestrates the setup of a development environment for a Todo application with a Node.js service ('app') and a PostgreSQL database service ('db'). The use of named volumes ensures data persistence between container restarts. The configuration is designed to work seamlessly by loading environment variables from the `.env` file into the respective services.
 
+## Output
+- Run command `docker-compose up`
+
+<img width="584" alt="image" src="https://github.com/AshrafMd-1/pupilfirst-wd401/assets/98876115/eda6e5a6-692c-4381-bd3e-79a62ef8bf26">
+
+<img width="593" alt="image" src="https://github.com/AshrafMd-1/pupilfirst-wd401/assets/98876115/88dd3c87-5947-4816-b060-6567f3d2949b">
+
 # Setup CICD Pipeline
 
 ## Introduction
@@ -364,5 +371,7 @@ jobs:
 ## Output
 
 ![image](https://github.com/AshrafMd-1/pupilfirst-wd401/assets/98876115/7ccc5176-0687-4ff7-8894-a1c52b5b6526)
+
+![image](https://github.com/AshrafMd-1/pupilfirst-wd401/assets/98876115/fcbdf110-e0dd-4b04-af6f-feb1a7aed767)
 
 This CI/CD pipeline automates the build, testing, and notification processes, ensuring a smooth and efficient development workflow.
